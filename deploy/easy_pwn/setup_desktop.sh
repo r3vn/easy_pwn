@@ -6,7 +6,7 @@ apt update
 sleep 1
 
 echo "(chroot) [-] installing kali desktop, default tools and matchbox's virtual keyboard..."
-apt install -y kali-desktop-xfce xwayland matchbox-keyboard # kali-linux-default
+apt install -y kali-desktop-xfce xwayland matchbox-keyboard kali-linux-default
 sleep 1
 
 echo "(chroot) [-] cleaning apt cache..."

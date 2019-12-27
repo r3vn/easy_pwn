@@ -12,13 +12,13 @@ easy_pwn.sh [action] [kali-rootfs-path]
 ```
 Currently available actions:
 
-	- *create*, it download latest kalifs-armhf from nethunter's repositories,then chroot it and install the following packages :
-		- kali-desktop-xfce : kali default DE (undercover mode works too)
-		- Xwayland : required to run  X 
-		- kali-linux-default : kali default tools metapackage
-	- *desktop* is meant to set some required environment variables, chroot kali and start xfce desktop
-	- *shell*, it run chrooted shell session on fingerterm
-	- *update* is meant to update desktop icons and chroot with latest easy_pwn scripts
+- *create*, it download latest kalifs-armhf from nethunter's repositories,then chroot it and install the following packages :
+	- kali-desktop-xfce : kali default DE (undercover mode works too)
+	- Xwayland : required to run  X 
+	- kali-linux-default : kali default tools metapackage
+- *desktop* is meant to set some required environment variables, chroot kali and start xfce desktop
+- *shell*, it run chrooted shell session on fingerterm
+- *update* is meant to update desktop icons and chroot with latest easy_pwn scripts
 
 ## Requirements
 

@@ -11,6 +11,7 @@ todo
 easy_pwn.sh [action] [kali-rootfs-path]
 ```
 Currently available actions:
+
 	- *create*, it download latest kalifs-armhf from nethunter's repositories,then chroot it and install the following packages :
 		- kali-desktop-xfce : kali default DE (undercover mode works too)
 		- Xwayland : required to run  X 

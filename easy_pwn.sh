@@ -64,12 +64,11 @@ check_mount() {
 update_pwn(){
 	# deploy easy pwn
 	echo "[-] easy_pwn deploy..."
-	cp -avr $PWN_DIR/deploy/easy_pwn $TARGET/opt/
+	cp -avr -T $PWN_DIR/deploy/easy_pwn $TARGET/opt/easy_pwn
 
 	# deploy xfce configs
-	echo "[-] xfce4 configs deploy..."
-	mkdir -p $TARGET/root/.config
-	cp -avr $PWN_DIR/deploy/configs/xfce4 $TARGET/root/.config/xfce4
+	echo "[-] user configs deploy..."
+	cp -avr -T $PWN_DIR/deploy/configs $TARGET/root/.config
 
 	# add execution permissions on /opt/easy_pwn
 	chmod +x $TARGET/opt/easy_pwn/setup_desktop.sh

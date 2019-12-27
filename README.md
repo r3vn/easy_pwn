@@ -12,13 +12,13 @@ easy_pwn.sh [action] [kali-rootfs-path]
 ```
 Currently available actions:
 
-- *create*, it download latest kalifs-armhf from nethunter's repositories,then chroot it and install the following packages :
+- **create**, it download latest kalifs-armhf from nethunter's repositories,then chroot it and install the following packages :
 	- kali-desktop-xfce : kali default DE (undercover mode works too)
 	- Xwayland : required to run  X 
 	- kali-linux-default : kali default tools metapackage
-- *desktop* is meant to set some required environment variables, chroot kali and start xfce desktop
-- *shell*, it run chrooted shell session on fingerterm
-- *update* is meant to update desktop icons and chroot with latest easy_pwn scripts
+- **desktop** is meant to set some required environment variables, chroot kali and start xfce desktop
+- **shell**, it run chrooted shell session on fingerterm
+- **update** is meant to update desktop icons and chroot with latest easy_pwn scripts
 
 ## Requirements
 
@@ -26,7 +26,7 @@ Currently available actions:
 
 ## Examples
 
-*Create a kali-chroot*
+**Create a kali-chroot**
 
 ```
 $ git clone https://github.com/r3vn/easy_pwn.git
@@ -36,7 +36,7 @@ $ devel-su
 # ./easy_pwn.sh create /media/sdcard/epwn
 ```
 
-*Start kali desktop*
+**Start kali desktop**
 
 "create" should create a "yourchrootname".desktop file in your /home/nemo/.local/share/applications/, so you should be able to launch the script directly from sfos's app drawner.
 To start the script manually:
@@ -48,7 +48,7 @@ $ devel-su
 # ./easy_pwn.sh desktop /media/sdcard/epwn
 ```
 
-*Start kali shell on fingerterm*
+**Start kali shell on fingerterm**
 
 ```
 $ cd easy_pwn
@@ -56,7 +56,8 @@ $ devel-su
   (insert root password)
 # ./easy_pwn.sh shell /media/sdcard/epwn
 ```
-*Update scripts and icon*
+
+**Update scripts and icon**
 ```
 $ cd easy_pwn
 $ devel-su

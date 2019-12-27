@@ -2,14 +2,6 @@
 
 easy_pwn is a set of automated scripts to setup and run chrooted kali desktop on Sailfish OS devices.
 
-## Screenshots
-
-<p align="center">
-	<img src="https://user-images.githubusercontent.com/635790/71497108-0aff7100-2857-11ea-9b95-977d9ccb8adf.jpg" width="500px">
-	<img src="https://user-images.githubusercontent.com/635790/71497196-692c5400-2857-11ea-9b7c-25bd8d5eb6bb.jpg" width="500px">
-</p>
-
-
 ## Usage
 
 ```
@@ -28,6 +20,13 @@ Currently available actions:
 ## Requirements
 
  - qxcompositor (https://openrepos.net/content/elros34/qxcompositor), it is required in order to get landscape mode work
+
+## Screenshots
+
+<p align="center">
+	<img src="https://user-images.githubusercontent.com/635790/71497108-0aff7100-2857-11ea-9b95-977d9ccb8adf.jpg" width="500px">
+	<img src="https://user-images.githubusercontent.com/635790/71497196-692c5400-2857-11ea-9b7c-25bd8d5eb6bb.jpg" width="500px">
+</p>
 
 ## Examples
 

@@ -64,7 +64,7 @@ check_mount() {
 update_pwn(){
 	# deploy easy pwn
 	echo "[-] easy_pwn deploy..."
-	cp -avr $PWN_DIR/deploy/easy_pwn $TARGET/opt/easy_pwn
+	cp -avr $PWN_DIR/deploy/easy_pwn $TARGET/opt/
 
 	# deploy xfce configs
 	echo "[-] xfce4 configs deploy..."

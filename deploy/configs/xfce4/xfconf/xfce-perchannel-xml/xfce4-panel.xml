@@ -50,6 +50,7 @@
     </property>
     <property name="plugin-15" type="string" value="systray">
       <property name="names-ordered" type="array">
+        <value type="string" value="clipman"/>
         <value type="string" value="networkmanager applet"/>
         <value type="string" value="syncthing-gtk"/>
         <value type="string" value="florence"/>

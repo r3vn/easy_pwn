@@ -2,8 +2,8 @@
 # easy_pwn : start kali desktop
 
 # set env on sfos qxcompositor
-mkdir -p /run/user/1001
-export XDG_RUNTIME_DIR=/run/user/1001
+#mkdir -p /run/user/1001
+export XDG_RUNTIME_DIR=/run/user/100000
 
 if [ "$1" == "l" ]
 then

@@ -18,7 +18,7 @@
     <property name="ButtonImages" type="empty"/>
     <property name="MenuImages" type="empty"/>
     <property name="DecorationLayout" type="string" value=":minimize,maximize,close"/>
-    <property name="CursorThemeName" type="string" value=""/>
+    <property name="CursorThemeName" type="string" value="default"/>
   </property>
   <property name="Xfce" type="empty">
     <property name="LastCustomDPI" type="int" value="167"/>

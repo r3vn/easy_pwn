@@ -16,6 +16,7 @@
     <property name="FailsafeSessionName" type="empty"/>
     <property name="LockCommand" type="empty"/>
     <property name="StartAssistiveTechnologies" type="bool" value="false"/>
+    <property name="SessionName" type="string" value="Default"/>
   </property>
   <property name="sessions" type="empty">
     <property name="Failsafe" type="empty">

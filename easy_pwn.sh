@@ -15,8 +15,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# check privileges
 
+# check privileges
 if [ "$EUID" -ne 0 ]
 then 
 	echo "[!] run as root"
@@ -41,6 +41,42 @@ CHROOT_NAME=`basename "$TARGET"`
 CHROOT_PATH=`readlink -f "$TARGET"`
 PWN_ICON=$PWN_DIR/src/kali-panel-menu.svg
 
+kill_chroot() {
+	# Find processes who's root folder is actually the chroot
+	# https://askubuntu.com/a/552038
+	for ROOT in $(find /proc/*/root)
+	do
+		# Check where the symlink is pointing to
+		LINK=$(readlink -f $ROOT)
+
+		# If it's pointing to the $CHROOT you set above, kill the process
+		if echo $LINK | grep -q ${CHROOT_PATH%/}
+		then
+			PID=$(basename $(dirname "$ROOT"))
+			echo "[!] killing $PID..."
+			kill -9 $PID
+		fi
+	done
+	sleep 1
+
+}
+
+umount_all(){
+	# umount dev sys proc
+	if mountpoint -q $TARGET/dev/
+	then
+		# dev sys proc run
+		umount $TARGET/dev/pts
+		umount $TARGET/sys/
+		umount $TARGET/dev/
+		umount $TARGET/run
+		umount $TARGET/proc/
+		echo "[+] dev sys and proc umounted"
+
+		sleep 2
+	fi
+}
+
 check_mount() {
 	# mount dev sys proc
 	if mountpoint -q $TARGET/dev/
@@ -52,10 +88,13 @@ check_mount() {
 		mount -t proc proc $TARGET/proc/
 		mount --rbind /sys $TARGET/sys/
 		mount --rbind /dev $TARGET/dev/
+		mount --rbind /run $TARGET/run
 
-		# mount devpts and run
+		# mount devpts 
 		mount --bind /dev/pts $TARGET/dev/pts
-		mount --bind /run $TARGET/run
+
+		# copy resolv.conf
+		cp /etc/resolv.conf $TARGET/resolv.conf
 		
 		sleep 2
 	fi
@@ -69,8 +108,12 @@ update_pwn(){
 
 	# deploy xfce configs
 	echo "[-] user configs deploy..."
-	mkdir -p $TARGET/root/.config
-	cp -avr -T $PWN_DIR/deploy/configs $TARGET/root/.config
+	mkdir -p $TARGET/home/nemo/.config
+	cp -avr -T $PWN_DIR/deploy/configs $TARGET/home/nemo/.config
+
+	# fix nemo user home permissions
+	echo "[-] fixing permissions..."
+	chown -R nemo:nemo $TARGET/home/nemo
 
 	# add execution permissions on /opt/easy_pwn
 	chmod +x $TARGET/opt/easy_pwn/setup_desktop.sh
@@ -137,13 +180,13 @@ then
 	then
 
 		# set env on sfos qxcompositor
-		mkdir -p /run/user/1001
+		#mkdir -p /run/user/1001
 		export $(dbus-launch)
-		export XDG_RUNTIME_DIR=/run/user/1001
+		export XDG_RUNTIME_DIR=/run/user/100000
 
 		# start qxcompositor
 		echo "[-] starting qxcompositor..."
-		qxcompositor --wayland-socket-name ../../display/wayland-1 &
+		su nemo -c "qxcompositor --wayland-socket-name ../../display/wayland-1" &
 
 		sleep 3
 
@@ -153,7 +196,7 @@ then
 	echo "[-] chrooting..."
 
 	# run kali-side script
-	chroot $TARGET /opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION
+	chroot $TARGET su nemo -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION"
 
 elif [ "$ACTION" == "shell" ]
 then
@@ -174,6 +217,16 @@ then
 
 	# install chroot icon
 	install_icon
+
+elif [ "$ACTION" == "kill" ]
+then
+	echo "[!] WARNING : Experimental function"
+	# experimental
+	# kill chroot process
+	kill_chroot
+
+	# umount dev sys proc
+	#umount_all
 
 else
 	echo "[!] wrong action"

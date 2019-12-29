@@ -53,7 +53,7 @@ kill_chroot() {
 		if echo $LINK | grep -q ${CHROOT_PATH%/}
 		then
 			PID=$(basename $(dirname "$ROOT"))
-			echo "[!] killing $PID..."
+			echo "[!] killing $PID"
 			kill -9 $PID
 		fi
 	done
@@ -67,11 +67,13 @@ umount_all(){
 	then
 		# dev sys proc run
 		umount $TARGET/dev/pts
-		umount $TARGET/sys/
-		umount $TARGET/dev/
-		umount $TARGET/run
+		umount $TARGET/run/user/1001/pulse
+		umount $TARGET/run/display	
 		umount $TARGET/proc/
-		echo "[+] dev sys and proc umounted"
+		umount $TARGET/dev/
+		umount $TARGET/sys/
+
+		echo "[+] chroot umounted"
 
 		sleep 2
 	fi
@@ -81,20 +83,31 @@ check_mount() {
 	# mount dev sys proc
 	if mountpoint -q $TARGET/dev/
 	then
-		echo "[+] dev sys and proc mounted"
+		echo "[+] chroot mounted"
 	else
-		echo "[-] mounting dev sys and proc"
+		echo "[-] mounting chroot..."
+		# create isolated /run/user istance for pulseaudio
+		mkdir -p $TARGET/run/user/1001/pulse
+		mkdir -p $TARGET/run/display
+
+		chown -R nemo:nemo $TARGET/run/user/1001
+
 		# dev sys proc
 		mount -t proc proc $TARGET/proc/
 		mount --rbind /sys $TARGET/sys/
 		mount --rbind /dev $TARGET/dev/
-		mount --rbind /run $TARGET/run
+
+		# run directory
+		mount --rbind /run/user/100000/pulse $TARGET/run/user/1001/pulse
+		mount --rbind /run/display $TARGET/run/display
 
 		# mount devpts 
 		mount --bind /dev/pts $TARGET/dev/pts
 
 		# copy resolv.conf
 		cp /etc/resolv.conf $TARGET/resolv.conf
+
+		echo "[+] done."
 		
 		sleep 2
 	fi
@@ -160,7 +173,6 @@ then
 	# mount dev sys proc
 	check_mount
 
-	echo "[+] done."
 	echo "[-] chrooting..."
 
 	# run kali-side script
@@ -181,7 +193,7 @@ then
 
 		# set env on sfos qxcompositor
 		#mkdir -p /run/user/1001
-		export $(dbus-launch)
+		#export $(dbus-launch)
 		export XDG_RUNTIME_DIR=/run/user/100000
 
 		# start qxcompositor
@@ -198,13 +210,23 @@ then
 	# run kali-side script
 	chroot $TARGET su nemo -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION"
 
+elif [ "$ACTION" == "ssh" ]
+then
+	# start sshd inside chroot
+	# port : 2244
+	check_mount
+
+	echo "[-] chrooting..."
+	chroot $TARGET /usr/sbin/sshd -p2244
+
+	echo "[+] SSHD enabled on tcp port 2244"
+
 elif [ "$ACTION" == "shell" ]
 then
 	# start chroot shell
 	# mount dev sys proc
 	check_mount
 
-	echo "[+] done."
 	echo "[-] chrooting..."
 
 	# run kali-side script

@@ -3,7 +3,9 @@
 
 # set env on sfos qxcompositor
 #mkdir -p /run/user/1001
-export XDG_RUNTIME_DIR=/run/user/100000
+export XDG_RUNTIME_DIR=/run/user/1001
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/dbus/system_bus_socket"
+export BROWSER="/usr/bin/firefox"
 
 if [ "$1" == "l" ]
 then
@@ -28,4 +30,4 @@ export DISPLAY=:0
 export QT_QPA_PLATFORM=xcb 
 
 # start xfce session
-startxfce4
+startxfce4 

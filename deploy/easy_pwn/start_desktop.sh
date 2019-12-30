@@ -6,6 +6,7 @@
 export XDG_RUNTIME_DIR=/run/user/1001
 export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/dbus/system_bus_socket"
 export BROWSER="/usr/bin/firefox"
+export LANG=C
 
 if [ "$1" == "l" ]
 then

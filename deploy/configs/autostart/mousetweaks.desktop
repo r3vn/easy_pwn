@@ -1,5 +1,7 @@
 [Desktop Entry]
-Hidden=false
-RunHook=0
-TryExec=xfce4-clipman
-Exec=xfce4-clipman
+Encoding=UTF-8
+Name=mousetweaks
+TryExec=mousetweaks --ssc --ssc-time=1.0 -t 30
+Exec=mousetweaks --ssc --ssc-time=1.0 -t 30
+Terminal=false
+Type=Application

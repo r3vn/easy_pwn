@@ -1,5 +1,5 @@
 [Desktop Entry]
 Hidden=false
 RunHook=0
-TryExec=mousetweaks --ssc --ssc-time=1.0
-Exec=mousetweaks --ssc --ssc-time=1.0
+TryExec=xfce4-clipman
+Exec=xfce4-clipman

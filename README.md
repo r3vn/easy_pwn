@@ -15,11 +15,13 @@ Currently available actions:
 	- kali-linux-default : kali default tools metapackage
 	- mousetweaks : for touch right-click attempt
 	- matchbox-keyboard : default virtual keyboard
+	- bettercap and bettercap-ui
 
 - **desktop** set some required environment variables, chroot kali and start xfce desktop
 - **shell** run chrooted shell session on fingerterm
 - **update** update desktop icons and chroot with latest easy_pwn scripts
 - **ssh** start a ssh server inside the chroot on port 2244
+- **bettercap** start bettercap web-ui on 127.0.0.1
 - **kill** kills all chroot processes
 
 ## Requirements
@@ -29,8 +31,7 @@ Currently available actions:
 ## Screenshots
 
 <p align="center">
-	<img src="https://user-images.githubusercontent.com/635790/71497108-0aff7100-2857-11ea-9b95-977d9ccb8adf.jpg" width="500px">
-	<img src="https://user-images.githubusercontent.com/635790/71497196-692c5400-2857-11ea-9b7c-25bd8d5eb6bb.jpg" width="500px">
+	<img src="https://user-images.githubusercontent.com/635790/71497108-0aff7100-2857-11ea-9b95-977d9ccb8adf.jpg" width="425px"> <img src="https://user-images.githubusercontent.com/635790/71497196-692c5400-2857-11ea-9b7c-25bd8d5eb6bb.jpg" width="425px">
 </p>
 
 ## Examples
@@ -62,6 +63,7 @@ To start the script manually:
 It is also possible to start a desktop session, in portrait mode, from the shell by running "/opt/easy_pwn/start_desktop.sh" script.
 
 **Update scripts and icon**
+
 ```
 # ./easy_pwn.sh update /media/sdcard/epwn
 ```
@@ -74,5 +76,6 @@ It is also possible to start a desktop session, in portrait mode, from the shell
 	# mount -o remount,suid /media/sdcard/your-partition-name
 	```
 - Thunar file manager (kali default) crash the session, anyway nautilus works fine.
-- mousetweaks longpress works with double tab ~~No right click on touch-only devices (long press on nautilus seems to work)(fix in progress)~~
+- mousetweaks longpress works with long double tab ~~No right click on touch-only devices (long press on nautilus seems to work)(fix in progress)~~
 - "--root" on desktop mode to start a root session (without sound)
+- firefox-esr tabs crash with sounds however chromium works very well

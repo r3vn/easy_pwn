@@ -86,20 +86,24 @@ check_mount() {
 		echo "[+] chroot mounted"
 	else
 		echo "[-] mounting chroot..."
-		# create isolated /run/user istance for pulseaudio
-		mkdir -p $TARGET/run/user/1001/pulse
-		mkdir -p $TARGET/run/display
+		# create isolated /run/user instance for XDG_RUNTIME_DIR
+		mkdir -p /run/user/1001/pulse
+		#mkdir -p $TARGET/run/display
+		#mkdir -p $TARGET/run/state
 
-		chown -R nemo:nemo $TARGET/run/user/1001
+		chown -R nemo:nemo /run/user/1001
 
 		# dev sys proc
 		mount -t proc proc $TARGET/proc/
 		mount --rbind /sys $TARGET/sys/
 		mount --rbind /dev $TARGET/dev/
 
+		mount --rbind /run $TARGET/run/
+
 		# run directory
-		mount --rbind /run/user/100000/pulse $TARGET/run/user/1001/pulse
-		mount --rbind /run/display $TARGET/run/display
+		mount --rbind /run/user/100000/pulse /run/user/1001/pulse
+		#mount --rbind /run/display $TARGET/run/display
+		#mount --rbind /run/state $TARGET/run/state
 
 		# mount devpts 
 		mount --bind /dev/pts $TARGET/dev/pts
@@ -143,113 +147,131 @@ install_icon(){
 	sleep 1
 }
 
-# action switch
-if [ "$ACTION" == "create" ]
-then
-	# create a new chroot
+case "$ACTION" in
+		create)
+			# create a new chroot
+			if test -f "/tmp/kalifs-armhf-minimal.tar.xz"
+			then
+				echo "[+] found kalifs-armhf-minimal.tar.xz, skipping download"
+			else
+				# download latest kalifs armhf build from nethunter mirrors
+				echo "[-] downloading latest kalifs armhf build from nethunter mirrors..."
+				curl $KALI_IMG --output /tmp/kalifs-armhf-minimal.tar.xz
+				sleep 1
+			fi
 
-	if test -f "/tmp/kalifs-armhf-minimal.tar.xz"
-	then
-		echo "[+] found kalifs-armhf-minimal.tar.xz, skipping download"
-	else
-		# download latest kalifs armhf build from nethunter mirrors
-		echo "[-] downloading latest kalifs armhf build from nethunter mirrors..."
-		curl $KALI_IMG --output /tmp/kalifs-armhf-minimal.tar.xz
-		sleep 1
-	fi
+			# untar kalifs archive
+			echo "[-] unpacking kalifs-armhf-minimal..."
+			xz -cd  /tmp/kalifs-armhf-minimal.tar.xz | tar xvf - -C $PR_DIR
+			mv $PR_DIR/kali-armhf/ $TARGET/
+			sleep 1
 
-	# untar kalifs archive
-	echo "[-] unpacking kalifs-armhf-minimal..."
-	xz -cd  /tmp/kalifs-armhf-minimal.tar.xz | tar xvf - -C $PR_DIR
-	mv $PR_DIR/kali-armhf/ $TARGET/
-	sleep 1
+			# deploy easy_pwn
+			update_pwn
 
-	# deploy easy_pwn
-	update_pwn
+			# add desktop launcher
+			install_icon
 
-	# add desktop launcher
-	install_icon
+			# mount dev sys proc
+			check_mount
 
-	# mount dev sys proc
-	check_mount
+			echo "[-] chrooting..."
 
-	echo "[-] chrooting..."
+			# run kali-side script
+			chroot $TARGET /opt/easy_pwn/setup_desktop.sh
 
-	# run kali-side script
-	chroot $TARGET /opt/easy_pwn/setup_desktop.sh
+			;;
+         
+		desktop)
+			# start chroot desktop
+			# mount dev sys proc
+			check_mount
 
+			echo "[?] select desktop orientation (default portrait): [p]ortrait, [l]andscape: "
+			read DESKTOP_ORIENTATION
 
-elif [ "$ACTION" == "desktop" ]
-then
-	# start chroot desktop
-	# mount dev sys proc
-	check_mount
+			if [ "$DESKTOP_ORIENTATION" == "l" ]
+			then
 
-	echo "[?] select desktop orientation (default portrait): [p]ortrait, [l]andscape: "
-	read DESKTOP_ORIENTATION
+				# set env on sfos qxcompositor
+				#mkdir -p /run/user/1001
+				#export $(dbus-launch)
+				export XDG_RUNTIME_DIR=/run/user/1001
 
-	if [ "$DESKTOP_ORIENTATION" == "l" ]
-	then
+				# start qxcompositor
+				echo "[-] starting qxcompositor..."
+				su nemo -c "qxcompositor --wayland-socket-name ../../display/wayland-1" &
 
-		# set env on sfos qxcompositor
-		#mkdir -p /run/user/1001
-		#export $(dbus-launch)
-		export XDG_RUNTIME_DIR=/run/user/100000
+				sleep 3
 
-		# start qxcompositor
-		echo "[-] starting qxcompositor..."
-		su nemo -c "qxcompositor --wayland-socket-name ../../display/wayland-1" &
+			fi
 
-		sleep 3
+			echo "[+] done."
+			
+			# start dbus
+			echo "[-] starting chroot's dbus..."
+			chroot $TARGET /etc/init.d/dbus start
 
-	fi
+			# run kali-side script
+			echo "[-] chrooting..."
+			chroot $TARGET su nemo -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION"
 
-	echo "[+] done."
-	echo "[-] chrooting..."
+			;;
+		
+		ssh)
+			# start sshd inside chroot
+			# listen on: 0.0.0.0:224/tcp
+			check_mount
 
-	# run kali-side script
-	chroot $TARGET su nemo -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION"
+			echo "[-] chrooting..."
+			chroot $TARGET /usr/sbin/sshd -p2244
 
-elif [ "$ACTION" == "ssh" ]
-then
-	# start sshd inside chroot
-	# port : 2244
-	check_mount
+			echo "[+] SSHD enabled on tcp port 2244"
 
-	echo "[-] chrooting..."
-	chroot $TARGET /usr/sbin/sshd -p2244
+			;;
 
-	echo "[+] SSHD enabled on tcp port 2244"
+		bettercap)
+			# start bettercap webui
+			# listen on: 127.0.0.1:80/tcp
+			check_mount
 
-elif [ "$ACTION" == "shell" ]
-then
-	# start chroot shell
-	# mount dev sys proc
-	check_mount
+			echo "[-] chrooting..."
+			chroot $TARGET bettercap -caplet http-ui
 
-	echo "[-] chrooting..."
+			;;
 
-	# run kali-side script
-	chroot $TARGET 
+		shell)
+			# start chroot shell
+			# mount dev sys proc
+			check_mount
 
-elif [ "$ACTION" == "update" ]
-then
-	# deploy easy_pwn
-	update_pwn
+			echo "[-] chrooting..."
 
-	# install chroot icon
-	install_icon
+			# run kali-side script
+			chroot $TARGET 
 
-elif [ "$ACTION" == "kill" ]
-then
-	echo "[!] WARNING : Experimental function"
-	# experimental
-	# kill chroot process
-	kill_chroot
+			;;
 
-	# umount dev sys proc
-	#umount_all
+		update)
+			# deploy easy_pwn
+			update_pwn
 
-else
-	echo "[!] wrong action"
-fi
+			# install chroot icon
+			install_icon
+
+			;;
+
+		kill)
+			echo "[!] WARNING : killing all chroot processes"
+			# experimental
+			# kill chroot process
+			kill_chroot
+
+			# umount dev sys proc
+			#umount_all
+
+			;;
+		*)
+			echo "[!] Usage: $0 {create|desktop|shell|update|kill|bettercap|ssh} [kali-rootfs-path]"
+			exit 1
+esac

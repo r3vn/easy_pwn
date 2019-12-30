@@ -15,7 +15,7 @@ sleep 1
 
 # install packages
 echo "(chroot) [-] installing kali desktop, default tools and matchbox's virtual keyboard..."
-apt install -y kali-desktop-xfce xwayland matchbox-keyboard mousetweaks kali-linux-default
+apt install -y kali-desktop-xfce xwayland matchbox-keyboard mousetweaks bettercap bettercap-ui kali-linux-default
 sleep 1
 
 # clean apt

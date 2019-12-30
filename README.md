@@ -31,6 +31,7 @@ Currently available actions:
 ## Screenshots
 
 <p align="center">
+	<img src="https://user-images.githubusercontent.com/635790/71604582-3a69f280-2b63-11ea-99f5-c48b5a849bf8.jpg" width="425px"> <img src="https://user-images.githubusercontent.com/635790/71604584-3a69f280-2b63-11ea-8d90-bcd404ea3de4.jpg" width="425px">
 	<img src="https://user-images.githubusercontent.com/635790/71497108-0aff7100-2857-11ea-9b95-977d9ccb8adf.jpg" width="425px"> <img src="https://user-images.githubusercontent.com/635790/71497196-692c5400-2857-11ea-9b7c-25bd8d5eb6bb.jpg" width="425px">
 </p>
 
@@ -79,3 +80,4 @@ It is also possible to start a desktop session, in portrait mode, from the shell
 - mousetweaks longpress works with long double tab ~~No right click on touch-only devices (long press on nautilus seems to work)(fix in progress)~~
 - "--root" on desktop mode to start a root session (without sound)
 - firefox-esr tabs crash with sounds however chromium works very well
+- multiarch support

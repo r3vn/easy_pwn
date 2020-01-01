@@ -39,7 +39,7 @@ KALI_IMG="https://build.nethunter.com/kalifs/kalifs-latest/kalifs-armhf-minimal.
 PR_DIR=`dirname "$TARGET"`
 CHROOT_NAME=`basename "$TARGET"`
 CHROOT_PATH=`readlink -f "$TARGET"`
-PWN_ICON=$PWN_DIR/src/kali-panel-menu.svg
+PWN_ICON=$PWN_DIR/src/icon.png
 
 kill_chroot() {
 	# Find processes who's root folder is actually the chroot

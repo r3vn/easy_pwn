@@ -1,12 +1,15 @@
 #!/bin/bash
 # easy_pwn : setup kali desktop
 
+# get user
+PWN_USER=$1
+
 # add user 
-echo "(chroot) [-] adding nemo user..."
-adduser -u 100000 nemo
-cp -avr /etc/skel/.* /home/nemo/
-chown -R nemo:nemo /home/nemo
-usermod -aG sudo,inet,input,audio,users,video nemo
+echo "(chroot) [-] adding $PWN_USER user..."
+adduser -u 100000 $PWN_USER
+cp -avr /etc/skel/.* /home/$PWN_USER/
+chown -R $PWN_USER:$PWN_USER /home/$PWN_USER
+usermod -aG sudo,inet,input,audio,users,video $PWN_USER
 
 # refresh apt
 echo "(chroot) [-] updating repositories..."
@@ -14,7 +17,7 @@ apt update
 sleep 1
 
 # install packages
-echo "(chroot) [-] installing kali desktop, default tools and matchbox's virtual keyboard..."
+echo "(chroot) [-] installing packages (it will take a while)..."	
 # 1st line is for desktop stuff
 # 2nd line for kali-linux metapackages
 # 3rd line for easy_pwn additional tools
@@ -27,7 +30,7 @@ sleep 1
 echo "(chroot) [-] cleaning apt cache..."
 apt clean
 
-# fixing sudo warning
+# fixing sudo warnings
 echo -e "127.0.0.1\tSailfish" >> /etc/hosts
 
 # done

@@ -61,10 +61,23 @@ INPUT_LOOP(){
 		5) . $PWN_SCRIPT update $CHROOT_PATH ;;
 		6) . $PWN_SCRIPT kill $CHROOT_PATH ;;
 		7) . $PWN_SCRIPT quit $CHROOT_PATH ;;
+		00) HELP_MSG ;;
 		*)
 			echo "[!] invalid selection"
 			exit 1
 	esac
+}
+
+HELP_MSG(){
+	echo "[+] Available options:"
+	echo "   - 1 kali desktop"
+	echo "   - 2 kali shell"
+	echo "   - 3 ssh server"
+	echo "   - 4 bettercap webui"
+	echo "   - 5 update easy_pwn"
+	echo "   - 6 kill all chroot processes"
+	echo "   - 7 umount and quit (experimental)"
+	echo "   - 00 this message"
 }
 
 echo "  ___  __ _ ___ _   _       _ ____      ___ __"
@@ -72,16 +85,10 @@ echo " / _ \\/ _\` / __| | | |     | '_ \\ \\ /\\ / / '_ \\ "
 echo "|  __/ (_| \\__ \\ |_| |     | |_) \\ V  V /| | | |"
 echo " \\___|\\__,_|___/\\__, |     | .__/ \\_/\\_/ |_| |_|"
 echo "                 __/ |_____| |"             
-echo "                |___/______|_|  $PWN_VERSION "               
+echo "                |___/______|_|  ($PWN_VERSION) "               
 echo "	"
-echo "[+] Available options:"
-echo "   - 1 kali desktop"
-echo "   - 2 kali shell"
-echo "   - 3 ssh server"
-echo "   - 4 bettercap webui"
-echo "   - 5 update easy_pwn"
-echo "   - 6 kill all chroot processes"
-echo "   - 7 umount and quit (experimental)"
+
+HELP_MSG
 
 while :
 do

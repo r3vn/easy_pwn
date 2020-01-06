@@ -1,14 +1,7 @@
 #!/bin/bash
 # easy_pwn : start kali desktop
 
-# set env on sfos qxcompositor
-#mkdir -p /run/user/1001
-export XDG_RUNTIME_DIR=/run/user/1001
-export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/dbus/system_bus_socket"
-export BROWSER="/usr/bin/firefox"
-export LANG=C
-
-if [ "$1" == "l" ]
+if [ "$1" -eq "l" ]
 then
 	# Landscape mode
 	# connect to qxcompositor wayland socket
@@ -19,16 +12,20 @@ else
 	export WAYLAND_DISPLAY=../../display/wayland-0
 fi
 
+# set env
+export XDG_RUNTIME_DIR=/run/user/1001
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/dbus/system_bus_socket"
+export BROWSER="/usr/bin/firefox"
+export LANG=C
+export QT_QPA_PLATFORM=xcb # force qt applications backend to Xwayland
 export $(dbus-launch)
 
 # Start Xwayland window
 /opt/easy_pwn/Xwayland &
-
 sleep 3
-export DISPLAY=:0
 
-# force qt applications backend to Xwayland
-export QT_QPA_PLATFORM=xcb 
+# set display to xwayland
+export DISPLAY=:0
 
 # start xfce session
 startxfce4 

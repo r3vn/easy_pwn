@@ -23,6 +23,7 @@ Currently available actions:
 - **ssh** start a ssh server inside the chroot on port 2244
 - **bettercap** start bettercap web-ui on 127.0.0.1
 - **kill** kills all chroot processes
+- **quit** umount chroot
 
 ## Requirements
 
@@ -72,7 +73,7 @@ It is also possible to start a desktop session, in portrait mode, from the shell
 ## todo / known issues
 
 - ~~Audio doesn't work (fix in progress)~~
-- if your chroot is located under an external sdcard, you may need to remount the sd partition with suid enabled as follows:
+- included in the script ~~if your chroot is located under an external sdcard, you may need to remount the sd partition with suid enabled as follows~~
 	```
 	# mount -o remount,suid /media/sdcard/your-partition-name
 	```
@@ -81,3 +82,4 @@ It is also possible to start a desktop session, in portrait mode, from the shell
 - "--root" on desktop mode to start a root session (without sound)
 - firefox-esr tabs crash with sounds however chromium works very well
 - multiarch support
+- custom scripts

@@ -74,14 +74,14 @@ umount_all(){
 	if mountpoint -q $TARGET/dev/
 	then
 		umount -R $TARGET/dev/pts
-		umount -R $TARGET/var/lib/dbus
-		#umount -R $TARGET/run/user/100000/pulse
 		#umount -R $TARGET/run/display	
 		umount -R $TARGET/run
 		umount -R $TARGET/tmp/
 		umount $TARGET/proc/
 		umount -R $TARGET/dev/
 		umount -R $TARGET/sys/
+		umount -R $TARGET/var/lib/dbus
+		umount -R /run/user/1001/pulse
 
 		echo "[+] chroot umounted"
 
@@ -99,9 +99,41 @@ check_mount() {
 	else
 		echo "[-] mounting chroot..."
 
+		SD_NAME="0"
+
+		for dir in $(ls /run/media/$PWN_USER) 
+		do
+			if mountpoint -q "/run/media/$PWN_USER/$dir"
+			then
+				# chroot is located on sdcard
+				# remounting the sdcard with suid enabled
+				SD_NAME=$dir
+			fi
+		done
+
+		if [ "$SD_NAME" != "0" ]
+		then
+			echo "[!] warning $CHROOT_NAME seems located on a partition mounted without suid enabled."
+			echo "    we need to remount $SD_NAME with suid enabled in order to proceed."
+			echo "[?] remount $SD_NAME with setuid enabled? [y/n]"
+
+			read -p "[>] " $SUID_SELECTION
+
+			if [ "$SUID_SELECTION" == "y" ]
+			then
+				mount -o remount,suid /media/sdcard/$SD_NAME
+				echo "[-] sdcard remounted."
+				sleep 1
+			else
+				echo "[-] exit."
+				exit 1
+			fi
+
+		fi
+
 		# create nemo /run/user directory
 		mkdir -p /run/user/1001
-		chown -R nemo:nemo /run/user/1001
+		chown -R $PWN_USER:$PWN_USER /run/user/1001
 
 		# dev sys proc
 		mount -t proc proc $TARGET/proc/
@@ -109,7 +141,7 @@ check_mount() {
 		mount --rbind --make-rslave /dev $TARGET/dev/
 
 		# mount run
-		mount --rbind /run $TARGET/run/
+		mount --rbind --make-rslave /run $TARGET/run/
 
 		# wayland 
 		#mkdir -p $TARGET/run/display
@@ -117,7 +149,7 @@ check_mount() {
 
 		# pulseaudio
 		mkdir -p $TARGET/run/user/1001/pulse
-		mount --rbind --make-rslave /run/user/100000/pulse $TARGET/run/user/1001/pulse
+		mount --bind /run/user/100000/pulse /run/user/1001/pulse
 
 		# dbus
 		mkdir -p $TARGET/var/lib/dbus
@@ -151,12 +183,12 @@ update_pwn(){
 
 	# deploy xfce configs
 	echo "[-] user configs deploy..."
-	mkdir -p $TARGET/home/nemo/.config
-	cp -avr -T $PWN_DIR/deploy/configs $TARGET/home/nemo/.config
+	mkdir -p $TARGET/home/$PWN_USER/.config
+	cp -avr -T $PWN_DIR/deploy/configs $TARGET/home/$PWN_USER/.config
 
 	# fix nemo user home permissions
 	echo "[-] fixing permissions..."
-	chown -R nemo:nemo $TARGET/home/nemo
+	chown -R $PWN_USER:$PWN_USER $TARGET/home/$PWN_USER
 
 	# add execution permissions on /opt/easy_pwn
 	chmod +x $TARGET/opt/easy_pwn/setup_desktop.sh
@@ -169,11 +201,11 @@ update_pwn(){
 install_icon(){
 	# install .desktop icon on /home/nemo/.local/share/applications
 	# overwriting the previous
-	echo "[-] installing $CHROOT_NAME.desktop in /home/nemo/.local/share/applications..."
-	sed "s|XX_PWNPATH_XX|$PWN_DIR|g" $PWN_DIR/src/easy_pwn.desktop > /home/nemo/.local/share/applications/$CHROOT_NAME.desktop
-	sed -i "s|XX_NAME_XX|$CHROOT_NAME|g" /home/nemo/.local/share/applications/$CHROOT_NAME.desktop 
-	sed -i "s|XX_CHROOTPATH_XX|$CHROOT_PATH|g" /home/nemo/.local/share/applications/$CHROOT_NAME.desktop
-	sed -i "s|XX_ICON_XX|$PWN_ICON|g" /home/nemo/.local/share/applications/$CHROOT_NAME.desktop
+	echo "[-] installing $CHROOT_NAME.desktop in /home/$PWN_USER/.local/share/applications..."
+	sed "s|XX_PWNPATH_XX|$PWN_DIR|g" $PWN_DIR/src/easy_pwn.desktop > /home/$PWN_USER/.local/share/applications/$CHROOT_NAME.desktop
+	sed -i "s|XX_NAME_XX|$CHROOT_NAME|g" /home/$PWN_USER/.local/share/applications/$CHROOT_NAME.desktop 
+	sed -i "s|XX_CHROOTPATH_XX|$CHROOT_PATH|g" /home/$PWN_USER/.local/share/applications/$CHROOT_NAME.desktop
+	sed -i "s|XX_ICON_XX|$PWN_ICON|g" /home/$PWN_USER/.local/share/applications/$CHROOT_NAME.desktop
 
 	sleep 1
 }
@@ -191,7 +223,7 @@ start_desktop(){
 		export XDG_RUNTIME_DIR=/run/user/100000
 		# start qxcompositor
 		echo "[-] starting qxcompositor..."
-		su nemo -c "qxcompositor --wayland-socket-name ../../display/wayland-1" &
+		su $PWN_USER -c "qxcompositor --wayland-socket-name ../../display/wayland-1" &
 
 		sleep 3
 
@@ -204,7 +236,7 @@ start_desktop(){
 	# run kali-side script
 	echo "[-] chrooting..."
 	# store chroot output on /tmp/easy_pwn/epwn-session.log
-	chroot $TARGET su nemo -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION" > /tmp/easy_pwn/epwn-session.log 2>&1
+	chroot $TARGET su $PWN_USER -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION" > /tmp/easy_pwn/epwn-session.log 2>&1
 }
 
 get_kali(){
@@ -214,7 +246,15 @@ get_kali(){
 	else
 		# download latest kalifs armhf build from nethunter mirrors
 		echo "[-] downloading latest kalifs armhf build from nethunter mirrors..."
-		curl $KALI_IMG --output /tmp/kalifs-armhf-minimal.tar.xz
+
+		# fix for connection issues
+		ec=18;
+		while [ $ec -ne 0 ] 
+		do 
+			curl --output /tmp/kalifs-armhf-minimal.tar.xz -O -C - $KALI_IMG 
+			ec=$? 
+		done
+		 
 		sleep 1
 	fi
 
@@ -256,8 +296,9 @@ case "$ACTION" in
 		check_mount
 
 		# run setup-desktop on kali-side
+		# requires username as first arg
 		echo "[-] chrooting..."
-		chroot $TARGET /opt/easy_pwn/setup_desktop.sh
+		chroot $TARGET /opt/easy_pwn/setup_desktop.sh $PWN_USER
 	;;
 
 	"desktop")
@@ -305,12 +346,16 @@ case "$ACTION" in
 
 		# install chroot icon
 		install_icon
+
+		echo "[+] done."
 	;;
 
 	"kill")
 		# experimental
 		# kill chroot process
 		kill_chroot
+
+		echo "[+] done."
 	;;
 
 	"quit")

@@ -62,7 +62,7 @@ kill_chroot() {
 			echo "[!] killing $PID"
 
 			# store logs on epw-session.log
-			kill -9 $PID > /tmp/easy_pwn/epwn-session.log 2>&1
+			kill -9 $PID > /tmp/$CHROOT_NAME/epwn-session.log 2>&1
 		fi
 	done
 	sleep 1
@@ -117,7 +117,7 @@ check_mount() {
 			echo "    we need to remount $SD_NAME with suid enabled in order to proceed."
 			echo "[?] remount $SD_NAME with setuid enabled? [y/n]"
 
-			read -p "[>] " $SUID_SELECTION
+			read -p "[>] " SUID_SELECTION
 
 			if [ "$SUID_SELECTION" == "y" ]
 			then

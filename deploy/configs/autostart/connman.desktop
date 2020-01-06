@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=connman-tray
+TryExec=connman-gtk --tray
+Exec=connman-gtk --tray
+Terminal=false
+Type=Application

@@ -1,7 +1,7 @@
 #!/bin/bash
 # easy_pwn : start kali desktop
 
-if [ "$1" -eq "l" ]
+if [ "$1" == "l" ]
 then
 	# Landscape mode
 	# connect to qxcompositor wayland socket

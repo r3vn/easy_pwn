@@ -236,7 +236,7 @@ start_desktop(){
 	# run kali-side script
 	echo "[-] chrooting..."
 	# store chroot output on /tmp/easy_pwn/epwn-session.log
-	chroot $TARGET su $PWN_USER -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION" > /tmp/easy_pwn/epwn-session.log 2>&1
+	chroot $TARGET su $PWN_USER -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION" >> /tmp/$CHROOT_NAME/epwn-session.log 2>&1
 }
 
 get_kali(){

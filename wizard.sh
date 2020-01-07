@@ -39,14 +39,33 @@ CHROOT_PATH="$1"
 # import default settings
 . $PWN_DIR/settings.sh
 
-INPUT_LOOP(){
+script_selection(){
+	echo "[+] available scripts:"
+
+	av_scripts=$(ls $CHROOT_PATH/opt/easy_pwn/scripts/)
+	i=1
+
+	for j in $av_scripts
+	do
+		echo "   - $i $j"
+		av_scripts[i]=$j
+		i=$(( i + 1 ))
+	done
+
+	read -p "(script) [>] " SC_SELECT
+	echo "[-] selected: ${av_scripts[$SC_SELECT]}"
+
+	$PWN_SCRIPT script $CHROOT_PATH ${av_scripts[$SC_SELECT]}
+}
+
+input_loop(){
 	read -p "[>] " SELECTION
 
 	case "$SELECTION" in
 		1)
 			# start chroot desktop
 			echo "[?] select desktop orientation (default portrait): [p]ortrait, [l]andscape: "
-			read DESKTOP_ORIENTATION
+			read -p "(desktop) [>]" DESKTOP_ORIENTATION
 
 			if [ "$DESKTOP_ORIENTATION" == "l" ]
 			then
@@ -58,25 +77,27 @@ INPUT_LOOP(){
 		2) . $PWN_SCRIPT shell $CHROOT_PATH	;;
 		3) . $PWN_SCRIPT ssh $CHROOT_PATH ;;
 		4) . $PWN_SCRIPT bettercap $CHROOT_PATH	;;
-		5) . $PWN_SCRIPT update $CHROOT_PATH ;;
-		6) . $PWN_SCRIPT kill $CHROOT_PATH ;;
-		7) . $PWN_SCRIPT quit $CHROOT_PATH ;;
-		00) HELP_MSG ;;
+		5) script_selection ;;
+		6) . $PWN_SCRIPT update $CHROOT_PATH ;;
+		7) . $PWN_SCRIPT kill $CHROOT_PATH ;;
+		8) . $PWN_SCRIPT quit $CHROOT_PATH ;;
+		00) help_msg ;;
 		*)
 			echo "[!] invalid selection"
 			exit 1
 	esac
 }
 
-HELP_MSG(){
-	echo "[+] Available options:"
+help_msg(){
+	echo "[+] available options:"
 	echo "   - 1 kali desktop"
 	echo "   - 2 kali shell"
 	echo "   - 3 ssh server"
 	echo "   - 4 bettercap webui"
-	echo "   - 5 update easy_pwn"
-	echo "   - 6 kill all chroot processes"
-	echo "   - 7 umount and quit (experimental)"
+	echo "   - 5 run pwn script"
+	echo "   - 6 update easy_pwn"
+	echo "   - 7 kill all chroot processes"
+	echo "   - 8 umount and quit (experimental)"
 	echo "   - 00 this message"
 }
 
@@ -88,10 +109,10 @@ echo "                 __/ |_____| |"
 echo "                |___/______|_|  ($PWN_VERSION) "               
 echo "	"
 
-HELP_MSG
+help_msg
 
 while :
 do
-	INPUT_LOOP
+	input_loop
 done
 

@@ -165,6 +165,9 @@ check_mount() {
 		chmod 1777 /tmp/$CHROOT_NAME/
 		mount --bind --make-slave /tmp/$CHROOT_NAME $TARGET/tmp
 
+		# replace chroot iptables binary with sailfish's iptables
+		cp -ar /usr/sbin/iptables $CHROOT_PATH/usr/sbin/iptables
+
 		# copy resolv.conf
 		cp /etc/resolv.conf $TARGET/resolv.conf
 
@@ -327,7 +330,7 @@ case "$ACTION" in
 		check_mount
 
 		echo "[-] chrooting..."
-		chroot $TARGET bettercap -caplet http-ui
+		chroot $TARGET bettercap -caplet http-ui -iface wlan0
 	;;
 
 	"shell")
@@ -368,6 +371,39 @@ case "$ACTION" in
 		echo "[+] kali session closed"
 		sleep 3
 		exit 1
+	;;
+	"script")
+		# execute custom scripts
+		# check mount
+		check_mount
+
+		# requires 3 args example: 
+		# ./easy_pwn.sh script /media/sdcard/sdtest/epwn rougue_ap
+		# check args
+		if [ "$#" -lt 3 ] 
+		then
+			echo "[!] script require 3 arguments."
+			echo "    usage: $0 script [destination-path] [script_name]" 
+			exit 1
+		fi
+
+		# get requested script name
+		SCRIPT_NAME="$3"
+
+		# check if script main exist
+		if [[ -f "$CHROOT_PATH/opt/easy_pwn/scripts/$SCRIPT_NAME/main.sh" ]]
+		then
+			# execute the script 
+			echo "[-] loading $SCRIPT_NAME."
+			chmod +x $CHROOT_PATH/opt/easy_pwn/scripts/$SCRIPT_NAME/main.sh
+
+			echo "[-] chrooting..."
+			chroot $TARGET /opt/easy_pwn/scripts/$SCRIPT_NAME/main.sh
+
+		else
+			echo "[!] script '$SCRIPT_NAME' not found."
+		fi
+
 	;;
 
 	*)

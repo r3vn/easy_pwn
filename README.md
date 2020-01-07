@@ -1,7 +1,9 @@
 # easy_pwn
 
 easy_pwn is a set of automated scripts designed to setup and run kali linux's chroot environment on Sailfish OS devices.
+
 It allows to run a full-kali desktop (xfce4) on Xwayland with touch screen support (even undercover mode works), without VNC or other ugly stuff behind.
+
 Currently a rogue access point script is implemented, feel free to contribute.
 
 ## Usage
@@ -52,31 +54,31 @@ $ devel-su
 # ./easy_pwn.sh create /media/sdcard/sdname/chrootname
 ```
 
+
 **start kali desktop**
-
 After the "create" process, an icon called "chrootname" should appaer on sfos's app drawer, so the script can be executed directly from sfos as a normal application.
-To start the script manually:
 
+To start the script manually:
 ```
 # ./easy_pwn.sh desktop /media/sdcard/sdname/chrootname
 ```
 
-**start kali shell on fingerterm**
 
+**start kali shell on fingerterm**
 ```
 # ./easy_pwn.sh shell /media/sdcard/sdname/chrootname
 ```
 It is also possible to start a desktop session, in portrait mode, from the shell by running "/opt/easy_pwn/start_desktop.sh" script.
 
+
 **update scripts and icon**
 It is strongly recommanded to update the chroot after an easy_pwn upgrade
-
 ```
 # ./easy_pwn.sh update /media/sdcard/sdname/chrootname
 ```
 
-**run rogue_ap script**
 
+**run rogue_ap script**
 Make sure to have mobile data enabled and wifi enabled and not connected to any access point before proceed.
 ```
 # ./easy_pwn.sh script /media/sdcard/sdname/chrootname rogue_ap

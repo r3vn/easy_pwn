@@ -68,7 +68,7 @@ To start the script manually:
 It is also possible to start a desktop session, in portrait mode, from the shell by running "/opt/easy_pwn/start_desktop.sh" script.
 
 
-**run rouge_ap script**
+**run rogue_ap script**
 
 Make sure to have mobile data enabled and wifi enabled and not connected to any access point before proceed.
 ```
@@ -92,4 +92,4 @@ Make sure to have mobile data enabled and wifi enabled and not connected to any 
 ## supported device
 
 easy_pwn so far was tested on:
-	- Xperia X Compact with Sailfish OS 3.2.1.20 (Nuuksio)
+- Xperia X Compact with Sailfish OS 3.2.1.20 (Nuuksio)

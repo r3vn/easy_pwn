@@ -94,7 +94,7 @@ help_msg(){
 	echo "   - 2 kali shell"
 	echo "   - 3 ssh server"
 	echo "   - 4 bettercap webui"
-	echo "   - 5 run pwn script"
+	echo "   - 5 run a pwn script"
 	echo "   - 6 update easy_pwn"
 	echo "   - 7 kill all chroot processes"
 	echo "   - 8 umount and quit (experimental)"

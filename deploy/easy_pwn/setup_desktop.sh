@@ -21,7 +21,7 @@ echo "(chroot) [-] installing packages (it will take a while)..."
 # 1st line is for desktop stuff
 # 2nd line for kali-linux metapackages
 # 3rd line for easy_pwn additional tools
-apt install -y kali-desktop-xfce xwayland matchbox-keyboard mousetweaks \
+apt install -y kali-desktop-xfce xwayland matchbox-keyboard mousetweaks connman-gtk \
 				kali-linux-nethunter \
 				bettercap bettercap-ui     
 sleep 1

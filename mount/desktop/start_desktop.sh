@@ -21,7 +21,7 @@ export QT_QPA_PLATFORM=xcb # force qt applications backend to Xwayland
 export $(dbus-launch)
 
 # Start Xwayland window
-/opt/easy_pwn/Xwayland &
+/mnt/easy_pwn/desktop/Xwayland &
 sleep 3
 
 # set display to xwayland

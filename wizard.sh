@@ -37,12 +37,12 @@ PWN_SCRIPT=$PWN_DIR/easy_pwn.sh
 CHROOT_PATH="$1"
 
 # import default settings
-. $PWN_DIR/settings.sh
+. $PWN_DIR/mount/settings.sh
 
 script_selection(){
 	echo "[+] available scripts:"
 
-	av_scripts=$(ls $CHROOT_PATH/opt/easy_pwn/scripts/)
+	av_scripts=$(ls $PWN_DIR/mount/scripts/)
 	i=1
 
 	for j in $av_scripts
@@ -101,18 +101,23 @@ help_msg(){
 	echo "   - 00 this message"
 }
 
-echo "  ___  __ _ ___ _   _       _ ____      ___ __"
-echo " / _ \\/ _\` / __| | | |     | '_ \\ \\ /\\ / / '_ \\ "
-echo "|  __/ (_| \\__ \\ |_| |     | |_) \\ V  V /| | | |"
-echo " \\___|\\__,_|___/\\__, |     | .__/ \\_/\\_/ |_| |_|"
-echo "                 __/ |_____| |"             
-echo "                |___/______|_|  ($PWN_VERSION) "               
-echo "	"
+if test -f "$CHROOT_PATH/etc/hosts"
+then
+	echo "  ___  __ _ ___ _   _       _ ____      ___ __"
+	echo " / _ \\/ _\` / __| | | |     | '_ \\ \\ /\\ / / '_ \\ "
+	echo "|  __/ (_| \\__ \\ |_| |     | |_) \\ V  V /| | | |"
+	echo " \\___|\\__,_|___/\\__, |     | .__/ \\_/\\_/ |_| |_|"
+	echo "                 __/ |_____| |"             
+	echo "                |___/______|_|  ($PWN_VERSION) "               
+	echo "	"
 
-help_msg
+	help_msg
 
-while :
-do
-	input_loop
-done
+	while :
+	do
+		input_loop
+	done
+else
+	echo "[!] $1 is not a valid kali root."
+fi
 

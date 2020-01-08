@@ -19,7 +19,7 @@ available actions:
 	- matchbox-keyboard : default virtual keyboard
 	- bettercap and bettercap-ui
 - **script** let you run custom scripts, default available scripts are:
-	- rogue_ap : set up an open access point, redirect traffic from wlan to mobile data and attach bettercap
+	- rogue_ap : set up an open access point, redirect traffic from wlan to mobile data then attach bettercap
 - **desktop** set some required environment variables, chroot kali and start xfce desktop
 - **shell** run chrooted shell session on fingerterm
 - **update** update desktop icons and chroot with latest easy_pwn scripts
@@ -67,14 +67,8 @@ To start the script manually:
 ```
 It is also possible to start a desktop session, in portrait mode, from the shell by running "/opt/easy_pwn/start_desktop.sh" script.
 
-**update scripts and icon**
 
-It is strongly recommanded to update the chroot after an easy_pwn upgrade
-```
-# ./easy_pwn.sh update /media/sdcard/sdname/chrootname
-```
-
-**run rogue_ap script**
+**run rouge_ap script**
 
 Make sure to have mobile data enabled and wifi enabled and not connected to any access point before proceed.
 ```
@@ -91,7 +85,11 @@ Make sure to have mobile data enabled and wifi enabled and not connected to any 
 	```
 - Thunar file manager (kali default) crash the session, anyway nautilus works fine.
 - mousetweaks longpress works with long double tab ~~No right click on touch-only devices (long press on nautilus seems to work)(fix in progress)~~
-- "--root" on desktop mode to start a root session (without sound)
 - firefox-esr tabs crash with sounds however chromium works very well
 - multiarch support
 - done. ~~custom scripts~~
+
+## supported device
+
+easy_pwn so far was tested on:
+	- Xperia X Compact with Sailfish OS 3.2.1.20 (Nuuksio)

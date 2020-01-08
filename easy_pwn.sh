@@ -41,7 +41,7 @@ CHROOT_PATH=`readlink -f "$TARGET"`
 PWN_ICON=$PWN_DIR/src/icon.png
 
 # import default settings
-. $PWN_DIR/settings.sh
+. $PWN_DIR/mount/settings.sh
 
 
 kill_chroot() {
@@ -73,6 +73,7 @@ umount_all(){
 	# umount the chroot
 	if mountpoint -q $TARGET/dev/
 	then
+		umount -R $TARGET/mnt/easy_pwn
 		umount -R $TARGET/dev/pts
 		#umount -R $TARGET/run/display	
 		umount -R $TARGET/run
@@ -155,7 +156,7 @@ check_mount() {
 		mkdir -p $TARGET/var/lib/dbus
 		#mkdir -p $TARGET/run/dbus
 		#mount --rbind --make-rslave /run/dbus $TARGET/run/dbus
-		mount --rbind --make-rslave /var/lib/dbus $TARGET/var/lib/dbus
+		mount --bind --make-slave /var/lib/dbus $TARGET/var/lib/dbus
 
 		# mount devpts 
 		mount --bind --make-slave /dev/pts $TARGET/dev/pts
@@ -165,8 +166,12 @@ check_mount() {
 		chmod 1777 /tmp/$CHROOT_NAME/
 		mount --bind --make-slave /tmp/$CHROOT_NAME $TARGET/tmp
 
+		# easy_pwn mountpoint
+		mkdir -p $CHROOT_PATH/mnt/easy_pwn
+		mount --bind --make-slave $PWN_DIR/mount $CHROOT_PATH/mnt/easy_pwn
+
 		# replace chroot iptables binary with sailfish's iptables
-		cp -ar /usr/sbin/iptables $CHROOT_PATH/usr/sbin/iptables
+		cp -ar /sbin/iptables $CHROOT_PATH/sbin/iptables
 
 		# copy resolv.conf
 		cp /etc/resolv.conf $TARGET/resolv.conf
@@ -180,9 +185,9 @@ check_mount() {
 update_pwn(){
 	# update easy_pwn kali scripts
 	# deploy easy pwn
-	echo "[-] easy_pwn deploy..."
-	mkdir -p $TARGET/opt/easy_pwn
-	cp -avr -T $PWN_DIR/deploy/easy_pwn $TARGET/opt/easy_pwn
+	#echo "[-] easy_pwn deploy..."
+	#mkdir -p $TARGET/mnt/easy_pwn
+	#cp -avr -T $PWN_DIR/deploy/easy_pwn $TARGET/mnt/easy_pwn
 
 	# deploy xfce configs
 	echo "[-] user configs deploy..."
@@ -193,9 +198,9 @@ update_pwn(){
 	echo "[-] fixing permissions..."
 	chown -R $PWN_USER:$PWN_USER $TARGET/home/$PWN_USER
 
-	# add execution permissions on /opt/easy_pwn
-	chmod +x $TARGET/opt/easy_pwn/setup_desktop.sh
-	chmod +x $TARGET/opt/easy_pwn/start_desktop.sh
+	# add execution permissions on /mnt/easy_pwn
+	chmod +x $PWN_DIR/mount/desktop/setup_desktop.sh
+	chmod +x $PWN_DIR/mount/desktop/start_desktop.sh
 
 	# add execution permission on wizard.sh
 	chmod +x $PWN_DIR/wizard.sh
@@ -239,7 +244,7 @@ start_desktop(){
 	# run kali-side script
 	echo "[-] chrooting..."
 	# store chroot output on /tmp/easy_pwn/epwn-session.log
-	chroot $TARGET su $PWN_USER -c "/opt/easy_pwn/start_desktop.sh $DESKTOP_ORIENTATION" >> /tmp/$CHROOT_NAME/epwn-session.log 2>&1
+	chroot $TARGET su $PWN_USER -c "/mnt/easy_pwn/desktop/start_desktop.sh $DESKTOP_ORIENTATION" >> /tmp/$CHROOT_NAME/epwn-session.log 2>&1
 }
 
 get_kali(){
@@ -251,7 +256,7 @@ get_kali(){
 		echo "[-] downloading latest kalifs armhf build from nethunter mirrors..."
 
 		# fix for connection issues
-		ec=18;
+		ec=18
 		while [ $ec -ne 0 ] 
 		do 
 			curl --output /tmp/kalifs-armhf-minimal.tar.xz -O -C - $KALI_IMG 
@@ -276,10 +281,6 @@ for i; do
 			OR_LANDSCAPE=true
 
 		;;
-		"--root")
-			# enable root session
-			ROOT_SESSION=true
-		;;
 	esac
 done
 
@@ -301,7 +302,7 @@ case "$ACTION" in
 		# run setup-desktop on kali-side
 		# requires username as first arg
 		echo "[-] chrooting..."
-		chroot $TARGET /opt/easy_pwn/setup_desktop.sh $PWN_USER
+		chroot $TARGET /mnt/easy_pwn/desktop/setup_desktop.sh $PWN_USER
 	;;
 
 	"desktop")
@@ -391,14 +392,14 @@ case "$ACTION" in
 		SCRIPT_NAME="$3"
 
 		# check if script main exist
-		if [[ -f "$CHROOT_PATH/opt/easy_pwn/scripts/$SCRIPT_NAME/main.sh" ]]
+		if [[ -f "$CHROOT_PATH/mnt/easy_pwn/scripts/$SCRIPT_NAME/main.sh" ]]
 		then
 			# execute the script 
 			echo "[-] loading $SCRIPT_NAME."
-			chmod +x $CHROOT_PATH/opt/easy_pwn/scripts/$SCRIPT_NAME/main.sh
+			chmod +x $CHROOT_PATH/mnt/easy_pwn/scripts/$SCRIPT_NAME/main.sh
 
 			echo "[-] chrooting..."
-			chroot $TARGET /opt/easy_pwn/scripts/$SCRIPT_NAME/main.sh
+			chroot $TARGET /mnt/easy_pwn/scripts/$SCRIPT_NAME/main.sh
 
 		else
 			echo "[!] script '$SCRIPT_NAME' not found."

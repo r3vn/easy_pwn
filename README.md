@@ -55,7 +55,6 @@ $ devel-su
 **start kali desktop**
 
 After the "create" process, an icon called "chrootname" should appaer on sfos's app drawer, so the script can be executed directly from sfos as a normal application.\
-
 To start the script manually:
 ```
 # ./easy_pwn.sh desktop /media/sdcard/sdname/chrootname
@@ -66,7 +65,7 @@ To start the script manually:
 ```
 # ./easy_pwn.sh shell /media/sdcard/sdname/chrootname
 ```
-It is also possible to start a desktop session, in portrait mode, from the shell by running "/opt/easy_pwn/start_desktop.sh" script.\
+It is also possible to start a desktop session, in portrait mode, from the shell by running "/opt/easy_pwn/start_desktop.sh" script.
 
 **update scripts and icon**
 

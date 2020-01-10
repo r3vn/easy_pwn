@@ -7,7 +7,7 @@ PWN_USER=$1
 # add user 
 echo "(chroot) [-] adding $PWN_USER user..."
 adduser -u 100000 $PWN_USER
-cp -avr /etc/skel/.* /home/$PWN_USER/
+cp -avr -T /etc/skel/ /home/$PWN_USER/
 chown -R $PWN_USER:$PWN_USER /home/$PWN_USER
 usermod -aG sudo,inet,input,audio,users,video $PWN_USER
 

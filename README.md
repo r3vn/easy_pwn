@@ -93,7 +93,7 @@ it is possible to edit default settings for easy_pwn and scripts on mount/settin
 - multiarch support
 - done. ~~custom scripts~~
 
-## supported device
+## devices
 
 easy_pwn so far was tested on:
 - Xperia X Compact with Sailfish OS 3.2.1.20 (Nuuksio)

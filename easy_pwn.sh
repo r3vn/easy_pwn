@@ -408,6 +408,6 @@ case "$ACTION" in
 	;;
 
 	*)
-		echo "[!] Usage: $0 {create|desktop|shell|update|kill|bettercap|ssh|quit} [kali-rootfs-path]"
+		echo "[!] Usage: $0 {create|desktop|shell|update|kill|bettercap|ssh|script|quit} [kali-rootfs-path]"
 		exit 1
 esac

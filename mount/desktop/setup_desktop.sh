@@ -23,7 +23,7 @@ echo "(chroot) [-] installing packages (it will take a while)..."
 # 3rd line for easy_pwn additional tools
 apt install -y kali-desktop-xfce xwayland matchbox-keyboard mousetweaks connman-gtk \
 				kali-linux-nethunter \
-				bettercap bettercap-ui     
+				bettercap bettercap-ui hostapd hostapd-wpe   
 sleep 1
 
 # clean apt
